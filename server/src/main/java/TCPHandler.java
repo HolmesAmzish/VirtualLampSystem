@@ -2,6 +2,8 @@ import java.io.*;
 import java.net.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TCPHandler
@@ -10,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Holmes
  */
 public class TCPHandler implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(TCPHandler.class);
     private static final Map<String, Socket> connections = new ConcurrentHashMap<>(); // 存储设备ID和Socket映射
     private final Socket clientSocket;
 
@@ -22,53 +25,53 @@ public class TCPHandler implements Runnable {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))) {
 
-            // 注册设备
+            // Register device
             String deviceId = registerDevice(reader, writer);
             if (deviceId == null) {
                 return; // 设备注册失败，关闭连接
             }
 
-            System.out.println("设备已连接: " + deviceId);
+            System.out.println("Device connected: " + deviceId);
 
             // 持续监听设备消息
             String message;
             while ((message = reader.readLine()) != null) {
-                System.out.println("来自设备 " + deviceId + " 的消息: " + message);
+                System.out.println("Message from \"" + deviceId + "\" : " + message);
                 // 在这里可以处理设备发送的指令或状态更新
             }
 
         } catch (IOException e) {
-            System.out.println("连接发生错误: " + e.getMessage());
+            logger.warn("Error on connecting device: " + e.getMessage());
         } finally {
             disconnectDevice();
         }
     }
 
     /**
-     * 注册设备，将设备ID和Socket关联
+     * Register device with socket
      */
     private String registerDevice(BufferedReader reader, BufferedWriter writer) throws IOException {
         // 接收客户端发送的设备ID
-        writer.write("请输入设备ID (如: lamp_01):\n");
+        writer.write("Receive device id:\n");
         writer.flush();
         String deviceId = reader.readLine();
 
         if (deviceId == null || deviceId.isEmpty()) {
-            System.out.println("设备注册失败，未提供设备ID");
-            writer.write("注册失败: 未提供设备ID\n");
+            System.out.println("Register failed, missing ID");
+            writer.write("Register failed, device ID required\n");
             writer.flush();
             return null;
         }
 
-        // 检查是否已有同名设备连接
+        // Check existed device
         if (connections.containsKey(deviceId)) {
-            System.out.println("设备ID " + deviceId + " 已存在，拒绝连接");
-            writer.write("注册失败: 设备ID已存在\n");
+            System.out.println("Device ID " + deviceId + " already existed, connection refused");
+            writer.write("Register failed, device id already existed\n");
             writer.flush();
             return null;
         }
 
-        // 注册设备
+        // Register device
         connections.put(deviceId, clientSocket);
         writer.write("Register success: device " + deviceId + "\n");
         writer.flush();
@@ -76,7 +79,7 @@ public class TCPHandler implements Runnable {
     }
 
     /**
-     * 断开设备连接，移除设备注册
+     * Disconnect from device
      */
     private void disconnectDevice() {
         try {
@@ -93,28 +96,28 @@ public class TCPHandler implements Runnable {
             }
             clientSocket.close();
         } catch (IOException e) {
-            System.out.println("关闭连接时发生错误: " + e.getMessage());
+            System.out.println("Error occurred in disconnection: " + e.getMessage());
         }
     }
 
     /**
-     * 发送命令到设备
-     * @param deviceId 目标设备ID
-     * @param command  要发送的命令
+     * Send command to local device to perform
+     * @param deviceId target device id
+     * @param command
      */
     public static void sendCommand(String deviceId, String command) {
         Socket socket = connections.get(deviceId);
         if (socket == null) {
-            System.out.println("设备 " + deviceId + " 未连接");
+            System.out.println("Lamp " + deviceId + " is not connected.");
             return;
         }
 
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
             writer.write(command + "\n");
             writer.flush();
-            System.out.println("已发送命令到设备 " + deviceId + ": " + command);
+            System.out.println("Command has been sent " + deviceId + ": " + command);
         } catch (IOException e) {
-            System.out.println("发送命令到设备 " + deviceId + " 时发生错误: " + e.getMessage());
+            logger.warn("Error occurred when sending command to " + deviceId + " " + e.getMessage());
         }
     }
 
@@ -125,15 +128,15 @@ public class TCPHandler implements Runnable {
     public static void disconnect(String deviceId) {
         Socket socket = connections.remove(deviceId);
         if (socket == null) {
-            System.out.println("设备 " + deviceId + " 未连接");
+            System.out.println("Device " + deviceId + " is not connected.");
             return;
         }
 
         try {
             socket.close();
-            System.out.println("已断开设备 " + deviceId);
+            System.out.println("Disconnected from " + deviceId);
         } catch (IOException e) {
-            System.out.println("断开设备 " + deviceId + " 时发生错误: " + e.getMessage());
+            System.out.println("Error occurred disconnecting from " + deviceId + " " + e.getMessage());
         }
     }
 }

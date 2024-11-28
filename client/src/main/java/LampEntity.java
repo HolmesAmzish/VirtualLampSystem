@@ -1,5 +1,3 @@
-import java.time.LocalDateTime;
-
 /**
  * LampEntity
  * @version 1.0 2024-11-28
@@ -7,49 +5,34 @@ import java.time.LocalDateTime;
  */
 public class LampEntity {
     private String lampId;
-    private float temperature;
+    private double temperature;
     private int humidity;
     private int illuminance;
-    private String status;
+    private String status; // ON or OFF
 
-    LampEntity(String lampId) {
+    public LampEntity(String lampId) {
         this.lampId = lampId;
-        this.temperature = 0.0f;
-        this.humidity = 0;
-        this.illuminance = 0;
-        this.status = "Off";
+        this.temperature = Math.random() * 40; // Example temperature
+        this.humidity = (int) (Math.random() * 100);
+        this.illuminance = (int) (Math.random() * 1000);
+        this.status = "OFF";
     }
 
+    // Getters and setters
     public String getLampId() {
         return lampId;
     }
 
-    public void setLampId(String lampId) {
-        this.lampId = lampId;
-    }
-
-    public float getTemperature() {
+    public double getTemperature() {
         return temperature;
-    }
-
-    public void setTemperature(float temperature) {
-        this.temperature = temperature;
     }
 
     public int getHumidity() {
         return humidity;
     }
 
-    public void setHumidity(int humidity) {
-        this.humidity = humidity;
-    }
-
     public int getIlluminance() {
         return illuminance;
-    }
-
-    public void setIlluminance(int illuminance) {
-        this.illuminance = illuminance;
     }
 
     public String getStatus() {
@@ -60,5 +43,17 @@ public class LampEntity {
         this.status = status;
     }
 
-    // Constructor, getters, and setters
+//    public String toString() {
+//        return String.format("|%-8s|%-12.1f|%-9d|%-12d|%-7s|",
+//                this.getLampId(),
+//                this.getTemperature(),
+//                this.getHumidity(),
+//                this.getIlluminance(),
+//                this.getStatus());
+//    }
+
+    public void printStatus() {
+        System.out.print(String.format("Lamp ID: %s Status: %s\n", this.getLampId(), this.getStatus())
+        + String.format("Temperature: %.2f, Humidity: %d, Illuminance: %d\n", this.getTemperature(), this.getHumidity(), this.getIlluminance()));
+    }
 }

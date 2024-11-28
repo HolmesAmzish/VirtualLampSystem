@@ -1,5 +1,6 @@
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.net.*;
-import java.nio.ByteBuffer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -12,6 +13,7 @@ public class UDPReceiver implements Runnable {
     private static final int UDP_PORT = 8888;
     private static final LampStatusService lampService = new LampStatusService(MyBatisUtils.getSqlSessionFactory());
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Override
     public void run() {
         try (DatagramSocket socket = new DatagramSocket(UDP_PORT)) {
@@ -20,14 +22,13 @@ public class UDPReceiver implements Runnable {
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 socket.receive(packet);
 
-                // 解析 UDP 数据包
                 LampStatus status = parsePacket(packet.getData());
                 if (status != null) {
-                    // 将数据保存到数据库
+                    // Insert received status record
                     lampService.insertLampStatus(status);
 
-                    // 打印状态
-                    System.out.println("Lamp status recevied: " + status);
+                    // Record received UDP package
+                    logger.info("Lamp status received: {}", status.getDeviceId());
                 }
             }
         } catch (Exception e) {
@@ -37,7 +38,7 @@ public class UDPReceiver implements Runnable {
 
     private LampStatus parsePacket(byte[] data) {
         try {
-            // 假设数据包使用逗号分隔
+            // Split with comma
             String packetData = new String(data, 0, data.length).trim();
             String[] fields = packetData.split(",");
 
@@ -60,7 +61,7 @@ public class UDPReceiver implements Runnable {
             // 创建并返回 LampStatus 对象
             return new LampStatus(deviceId, timestamp, temperature, humidity, illuminance, status);
         } catch (Exception e) {
-            System.out.println("解析UDP数据包时出错：" + e.getMessage());
+            System.out.println("Error while parse UDP package" + e.getMessage());
             return null;
         }
     }

@@ -41,7 +41,7 @@ public class TCPClient {
     }
 
     // Method to handle control commands (turn on/off)
-    public void sendCommand(String command) {
+    public void sendMessage(String command) {
         try {
             out.println(command);
             String response = in.readLine();
@@ -49,18 +49,5 @@ public class TCPClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        TCPClient client = new TCPClient();
-
-        // Register the device with the server
-        client.registerDevice("lamp_01");
-
-        // Simulate sending a control command (e.g., turning the lamp ON)
-        client.sendCommand("switch ON");
-
-        // Simulate sending a control command (e.g., turning the lamp OFF)
-        client.sendCommand("switch OFF");
     }
 }

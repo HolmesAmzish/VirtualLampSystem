@@ -1,3 +1,6 @@
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
@@ -7,12 +10,14 @@ import java.util.concurrent.Executors;
 /**
  * Server
  * Main program running on server
- * @version 1.0 2024-11-26
+ * @version 1.1 2024-11-28
  * @author Holmes Amzish
  */
 public class Server {
     private static final int TCP_PORT = 7777;
     private static final int UDP_PORT = 8888;
+
+    private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
     private static final ExecutorService tcpExecutor = Executors.newCachedThreadPool();
     private static final LampStatusService lampService = new LampStatusService(MyBatisUtils.getSqlSessionFactory());
@@ -25,13 +30,13 @@ public class Server {
             new Thread(new UDPReceiver()).start();
 
             ServerSocket serverSocket = new ServerSocket(TCP_PORT);
-            System.out.println("TCP server listening: " + TCP_PORT);
+            logger.info("TCP server listening: {}", TCP_PORT);
             new Thread(() -> listenForTCPConnections(serverSocket)).start();
 
             // 启动命令行监听
             Scanner scanner = new Scanner(System.in);
             while (true) {
-                System.out.print("Control server -> ");
+                //System.out.print("Control server -> ");
                 String command = scanner.nextLine();
                 handleCommand(command);
             }
@@ -60,26 +65,26 @@ public class Server {
 //                    displayLampStatus(cmdParts[1]);
 //                    break;
                 case "switch":
-                    if (cmdParts.length < 3) throw new IllegalArgumentException("缺少开关动作或设备ID");
+                    if (cmdParts.length < 3) throw new IllegalArgumentException("Missing argument(s)");
                     switchLamp(cmdParts[1], cmdParts[2]);
                     break;
                 case "history":
-                    if (cmdParts.length < 2) throw new IllegalArgumentException("缺少设备ID");
+                    if (cmdParts.length < 2) throw new IllegalArgumentException("Device ID required");
                     historyLampStatus(cmdParts[1]);
                     break;
                 case "disconnect":
-                    if (cmdParts.length < 2) throw new IllegalArgumentException("缺少设备ID");
+                    if (cmdParts.length < 2) throw new IllegalArgumentException("Device ID required");
                     disconnectLamp(cmdParts[1]);
                     break;
                 case "exit":
-                    System.out.println("关闭服务器...");
+                    System.out.println("Shutting down...");
                     System.exit(0);
                     break;
                 default:
-                    System.out.println("未知命令!");
+                    System.out.println("Unknow command!");
             }
         } catch (Exception e) {
-            System.out.println("命令错误: " + e.getMessage());
+            System.out.println("Invalid command: " + e.getMessage());
         }
     }
 
@@ -94,7 +99,7 @@ public class Server {
 //    }
 
     private static void switchLamp(String action, String lampId) {
-        System.out.println("向设备 " + lampId + " 发送命令: " + action);
+        System.out.println("Sending command to " + lampId + " " + action);
         // TCPHandler 可通过维护的连接列表发送命令到客户端
         TCPHandler.sendCommand(lampId, "switch " + action);
     }
@@ -105,22 +110,12 @@ public class Server {
         if (history.isEmpty()) {
             System.out.println("No record for " + lampId);
         } else {
-            // 表头
-            System.out.printf("|%-17s|%-8s|%-12s|%-9s|%-12s|%-7s|\n", "Date time", "Lamp ID", "Temperature", "Humidity", "Illuminance", "Status");
-
-            // 遍历历史记录并格式化输出
+            System.out.printf("|%-20s|%-8s|%-12s|%-9s|%-12s|%-7s|\n", "Date time", "Lamp ID", "Temperature", "Humidity", "Illuminance", "Status");
             for (var status : history) {
-                System.out.printf("|%-17s|%-8s|%-12.1f|%-9d|%-12d|%-7s|\n",
-                        status.getTimestamp().toString(),
-                        status.getDeviceId(),
-                        status.getTemperature(),
-                        status.getHumidity(),
-                        status.getIlluminance(),
-                        status.getStatus());
+                System.out.printf(status.toLine());
             }
         }
     }
-
 
     private static void disconnectLamp(String lampId) {
         System.out.println("Disconnecting from " + lampId + "...");

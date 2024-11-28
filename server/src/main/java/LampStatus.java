@@ -8,14 +8,14 @@ import java.time.LocalDateTime;
  */
 public class LampStatus {
 
-    private String lampId;        // 路灯的设备ID，lamp_xx
-    private LocalDateTime timestamp; // 状态上传的时间
-    private float temperature;      // 温度，摄氏度
-    private int humidity;           // 湿度，0-100%
-    private int illuminance;        // 照度，0-100000
+    private String lampId;              // 路灯的设备ID，lamp_xx
+    private LocalDateTime timestamp;    // 状态上传的时间
+    private float temperature;          // 温度，摄氏度
+    private int humidity;               // 湿度，0-100%
+    private int illuminance;            // 照度，0-100000
     private String status;
 
-    // 构造函数
+    // Constructor
     public LampStatus(String lampId, LocalDateTime timestamp,
                       float temperature, int humidity, int illuminance,
                       String status) {
@@ -27,7 +27,6 @@ public class LampStatus {
         this.status = status;
     }
 
-    // Getter and Setter 方法
     public String getDeviceId() {
         return lampId;
     }
@@ -76,15 +75,25 @@ public class LampStatus {
         this.status = status;
     }
 
-    @Override
-    public String toString() {
-        return "LampStatus{" +
-                "deviceId='" + lampId + '\'' +
-                ", timestamp=" + timestamp +
-                ", temperature=" + temperature +
-                ", humidity=" + humidity +
-                ", illuminance=" + illuminance +
-                ", status=" + status +
-                '}';
+//    @Override
+//    public String toString() {
+//        return "LampStatus{" +
+//                "deviceId='" + lampId + '\'' +
+//                ", timestamp=" + timestamp +
+//                ", temperature=" + temperature +
+//                ", humidity=" + humidity +
+//                ", illuminance=" + illuminance +
+//                ", status=" + status +
+//                '}';
+//    }
+
+    public String toLine() {
+        return String.format("|%-20s|%-8s|%-12.1f|%-9d|%-12d|%-7s|\n",
+                this.getTimestamp().toString(),
+                this.getDeviceId(),
+                this.getTemperature(),
+                this.getHumidity(),
+                this.getIlluminance(),
+                this.getStatus());
     }
 }

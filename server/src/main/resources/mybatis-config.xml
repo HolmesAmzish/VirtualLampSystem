@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!-- 配置全局的属性 -->
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+    <!-- 配置数据库连接池（DataSource） -->
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://pur5.romules.top:3306/lamp_system"/>
+                <property name="username" value="cacc"/>
+                <property name="password" value="20230612"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!-- 配置映射器（Mapper） -->
+    <mappers>
+        <mapper class="LampStatusMapper"/>
+    </mappers>
+
+</configuration>

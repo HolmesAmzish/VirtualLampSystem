@@ -7,11 +7,37 @@
     <groupId>cn.arorms</groupId>
     <artifactId>VirtualLampSystem</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>server</module>
+        <module>client</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+        <dependencies>
+            <!-- SLF4J API -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.30</version> <!-- 或者使用你所需要的版本 -->
+            </dependency>
 
+            <!-- Logback 实现 -->
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.2.6</version> <!-- 或者使用你所需要的版本 -->
+            </dependency>
+
+            <!-- Logback 配置工具 -->
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>1.2.6</version> <!-- 或者使用你所需要的版本 -->
+            </dependency>
+        </dependencies>
 </project>

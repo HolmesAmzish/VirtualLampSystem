@@ -13,7 +13,7 @@ public class LampStatusService {
 
     private final SqlSessionFactory sqlSessionFactory;
 
-    // 构造函数，接受 SqlSessionFactory 参数
+    // Constructor
     public LampStatusService(SqlSessionFactory sqlSessionFactory) {
         this.sqlSessionFactory = sqlSessionFactory;
     }
@@ -24,8 +24,8 @@ public class LampStatusService {
 //    }
 
     /**
-     * 插入新的灯状态记录
-     * @param lampStatus 路灯状态对象
+     * Insert new record to database
+     * @param lampStatus
      */
     public void insertLampStatus(LampStatus lampStatus) {
         try (SqlSession session = sqlSessionFactory.openSession()) {
@@ -33,7 +33,7 @@ public class LampStatusService {
             mapper.insertLampStatus(lampStatus);
             session.commit();
         } catch (Exception e) {
-            System.err.println("插入路灯状态失败: " + e.getMessage());
+            System.err.println("Failed to insert new record: " + e.getMessage());
         }
     }
 

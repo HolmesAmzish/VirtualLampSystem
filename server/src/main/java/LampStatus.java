@@ -8,11 +8,11 @@ import java.time.LocalDateTime;
  */
 public class LampStatus {
 
-    private String lampId;              // 路灯的设备ID，lamp_xx
-    private LocalDateTime timestamp;    // 状态上传的时间
-    private float temperature;          // 温度，摄氏度
-    private int humidity;               // 湿度，0-100%
-    private int illuminance;            // 照度，0-100000
+    private String lampId;
+    private LocalDateTime timestamp;
+    private float temperature;
+    private int humidity;
+    private int illuminance;
     private String status;
 
     // Constructor

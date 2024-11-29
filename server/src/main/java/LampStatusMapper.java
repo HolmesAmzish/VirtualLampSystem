@@ -10,7 +10,6 @@ import java.util.List;
  */
 public interface LampStatusMapper {
 
-    // 插入新状态记录
     @Insert("INSERT INTO lamp_status (lamp_id, timestamp, temperature, humidity, illuminance, status) " +
             "VALUES (#{lampId}, #{timestamp}, #{temperature}, #{humidity}, #{illuminance}, #{status})")
     void insertLampStatus(LampStatus lampStatus);

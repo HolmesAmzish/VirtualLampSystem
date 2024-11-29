@@ -28,16 +28,14 @@ public class TCPHandler implements Runnable {
             // Register device
             String deviceId = registerDevice(reader, writer);
             if (deviceId == null) {
-                return; // 设备注册失败，关闭连接
+                return;
             }
 
             System.out.println("Device connected: " + deviceId);
 
-            // 持续监听设备消息
             String message;
             while ((message = reader.readLine()) != null) {
                 System.out.println("Message from \"" + deviceId + "\" : " + message);
-                // 在这里可以处理设备发送的指令或状态更新
             }
 
         } catch (IOException e) {
@@ -51,7 +49,6 @@ public class TCPHandler implements Runnable {
      * Register device with socket
      */
     private String registerDevice(BufferedReader reader, BufferedWriter writer) throws IOException {
-        // 接收客户端发送的设备ID
         writer.write("Receive device id:\n");
         writer.flush();
         String deviceId = reader.readLine();
@@ -83,7 +80,6 @@ public class TCPHandler implements Runnable {
      */
     private void disconnectDevice() {
         try {
-            // 查找并移除断开的设备
             String deviceId = connections.entrySet().stream()
                     .filter(entry -> entry.getValue().equals(clientSocket))
                     .map(Map.Entry::getKey)
@@ -134,7 +130,7 @@ public class TCPHandler implements Runnable {
 
         try {
             socket.close();
-            System.out.println("Disconnected from " + deviceId);
+            logger.info("Disconnected from " + deviceId);
         } catch (IOException e) {
             System.out.println("Error occurred disconnecting from " + deviceId + " " + e.getMessage());
         }

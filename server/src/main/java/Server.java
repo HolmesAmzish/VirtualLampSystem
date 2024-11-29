@@ -33,7 +33,6 @@ public class Server {
             logger.info("TCP server listening: {}", TCP_PORT);
             new Thread(() -> listenForTCPConnections(serverSocket)).start();
 
-            // 启动命令行监听
             Scanner scanner = new Scanner(System.in);
             while (true) {
                 //System.out.print("Control server -> ");
@@ -60,8 +59,17 @@ public class Server {
         String[] cmdParts = command.split(" ");
         try {
             switch (cmdParts[0]) {
+                case "help":
+                    System.out.print(String.format("""
+                            help                    # Show all command
+                            switch on/off <device>  # Turn on/off target device
+                            history <device>        # Show history of device
+                            disconnect <device>     # Disconnect from target device
+                            exit                    # Shutdown the server
+                            """));
+                    break;
 //                case "status":
-//                    if (cmdParts.length < 2) throw new IllegalArgumentException("缺少设备ID");
+//                    if (cmdParts.length < 2) throw new IllegalArgumentException("");
 //                    displayLampStatus(cmdParts[1]);
 //                    break;
                 case "switch":
@@ -81,7 +89,7 @@ public class Server {
                     System.exit(0);
                     break;
                 default:
-                    System.out.println("Unknow command!");
+                    System.out.println("Unknow command: " + cmdParts[0]);
             }
         } catch (Exception e) {
             System.out.println("Invalid command: " + e.getMessage());
@@ -89,18 +97,18 @@ public class Server {
     }
 
 //    private static void displayLampStatus(String lampId) {
-//        System.out.println("查询 " + lampId + " 的状态...");
+//        System.out.println("Querying " + lampId + "...");
 //        LampStatus status = lampService.getCurrentStatus(lampId);
 //        if (status != null) {
-//            System.out.println("设备状态: " + status);
+//            System.out.println("Status: " + status);
 //        } else {
-//            System.out.println("未找到设备 " + lampId + " 的状态记录");
+//            System.out.println("No record found " + lampId);
 //        }
 //    }
 
     private static void switchLamp(String action, String lampId) {
         System.out.println("Sending command to " + lampId + " " + action);
-        // TCPHandler 可通过维护的连接列表发送命令到客户端
+        // TCPHandler
         TCPHandler.sendCommand(lampId, "switch " + action);
     }
 

@@ -1,3 +1,6 @@
+创建数据库与数据表
+
+```sql
 CREATE DATABASE lamp_system;
 
 USE lamp_system;
@@ -11,3 +14,4 @@ CREATE TABLE lamp_status (
     illuminance INT NOT NULL,            -- 照度 (0-100000)
     state BOOLEAN NOT NULL               -- 灯的状态 (开/关)
 );
+```

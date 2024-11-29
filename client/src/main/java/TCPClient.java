@@ -1,3 +1,5 @@
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.*;
 
@@ -7,47 +9,60 @@ import java.net.*;
  * @author Holmes Amzish
  */
 public class TCPClient {
-    private static final String SERVER_HOST = "localhost"; // Server address
-    private static final int SERVER_PORT = 7777; // Server port
 
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
+    private LampEntity lampEntity;
+    private final Logger logger = LoggerFactory.getLogger(TCPClient.class);
 
-    public TCPClient() {
+    public TCPClient(String host, int port, LampEntity lampEntity) {
         try {
-            // Connect to the server
-            socket = new Socket(SERVER_HOST, SERVER_PORT);
+            this.lampEntity = lampEntity;
+            socket = new Socket(host, port);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
+            logger.info("Server connected: {}:{}", host, port);
+
+            // Register device
+            registerDevice(lampEntity.getLampId());
+
+            // Start a thread to listen for commands
+            new Thread(this::listenForCommands).start();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     // Method to register the device (send device ID)
-    public void registerDevice(String deviceId) {
+    private void registerDevice(String deviceId) {
         try {
-            // Send device ID to the server
-            out.println(deviceId);
-            System.out.println("Sent device ID: " + deviceId);
-
-            // Wait for acknowledgment from server
-            String response = in.readLine();
-            System.out.println("Server response: " + response);
+            out.println(deviceId); // Send device ID to server
+            logger.info("Sent device ID: " + deviceId);
+            String response = in.readLine(); // Wait for server response
+            logger.info("Server response: " + response);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     // Method to handle control commands (turn on/off)
-    public void sendMessage(String command) {
+    private void listenForCommands() {
         try {
-            out.println(command);
-            String response = in.readLine();
-            System.out.println("Server response: " + response);
+            String command;
+            while ((command = in.readLine()) != null) {
+                if (command.equalsIgnoreCase("switch on")) {
+                    lampEntity.setStatus("On");
+                    logger.info("Lamp set to ON.");
+                } else if (command.equalsIgnoreCase("switch off")) {
+                    lampEntity.setStatus("Off");
+                    logger.info("Lamp set to OFF.");
+                } else {
+                    System.out.println("Unknown command: " + command);
+                }
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Disconnected from server.");
         }
     }
 }

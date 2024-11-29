@@ -8,14 +8,14 @@ public class LampEntity {
     private double temperature;
     private int humidity;
     private int illuminance;
-    private String status; // ON or OFF
+    private boolean status; // ON or OFF
 
     public LampEntity(String lampId) {
         this.lampId = lampId;
         this.temperature = Math.random() * 40; // Example temperature
         this.humidity = (int) (Math.random() * 100);
         this.illuminance = (int) (Math.random() * 1000);
-        this.status = "OFF";
+        this.status = false;
     }
 
     // Getters and setters
@@ -35,11 +35,11 @@ public class LampEntity {
         return illuminance;
     }
 
-    public String getStatus() {
+    public boolean getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 

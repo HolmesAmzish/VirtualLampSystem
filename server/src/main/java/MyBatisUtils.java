@@ -15,9 +15,8 @@ public class MyBatisUtils {
 
     static {
         try {
-            // 加载 MyBatis 配置文件
+            // Load mybatis config
             InputStream inputStream = MyBatisUtils.class.getResourceAsStream("/mybatis-config.xml");
-            // 使用 SqlSessionFactoryBuilder 创建 SqlSessionFactory
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
         } catch (Exception e) {
             e.printStackTrace();
@@ -25,7 +24,6 @@ public class MyBatisUtils {
         }
     }
 
-    // 获取 SqlSessionFactory 实例
     public static SqlSessionFactory getSqlSessionFactory() {
         return sqlSessionFactory;
     }

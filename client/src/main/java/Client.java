@@ -1,7 +1,4 @@
-import java.time.Duration;
 import java.util.Scanner;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +12,6 @@ public class Client {
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
 
     private static final int TCP_PORT = 7777;
-    private static final ExecutorService commandExecutor = Executors.newSingleThreadExecutor();
 
     // Initialize connection info
     static String serverAddress = "localhost";
@@ -50,8 +46,6 @@ public class Client {
         }
     }
 
-
-
     /**
      * Handle incoming commands from the user.
      * @param command the user input command
@@ -59,18 +53,18 @@ public class Client {
     private static void handleCommand(String command) {
         switch (command) {
             case "help":
-                System.out.print(String.format("""
+                System.out.print("""
                         switch on/off       # Turn on/off the lamp
                         status              # Show status of lamp
                         update              # Update status to server actively
-                        """));
+                        """);
                 break;
             case "switch on":
-                lampEntity.setStatus("ON");
+                lampEntity.setStatus(true);
                 logger.info("Lamp status set \"On\"");
                 break;
             case "switch off":
-                lampEntity.setStatus("OFF");
+                lampEntity.setStatus(false);
                 logger.info("Lamp status set \"Off\"");
                 break;
             case "status":

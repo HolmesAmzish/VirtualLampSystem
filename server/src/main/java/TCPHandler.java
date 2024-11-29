@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TCPHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(TCPHandler.class);
-    private static final Map<String, Socket> connections = new ConcurrentHashMap<>(); // 存储设备ID和Socket映射
+    private static final Map<String, Socket> connections = new ConcurrentHashMap<>();
     private final Socket clientSocket;
 
     public TCPHandler(Socket clientSocket) {
@@ -31,7 +31,7 @@ public class TCPHandler implements Runnable {
                 return;
             }
 
-            System.out.println("Device connected: " + deviceId);
+            logger.info("Device connected: {}", deviceId);
 
             String message;
             while ((message = reader.readLine()) != null) {
@@ -88,7 +88,7 @@ public class TCPHandler implements Runnable {
 
             if (deviceId != null) {
                 connections.remove(deviceId);
-                System.out.println("Disconnect from: " + deviceId);
+                logger.info("Disconnect from: {}", deviceId);
             }
             clientSocket.close();
         } catch (IOException e) {
@@ -118,8 +118,8 @@ public class TCPHandler implements Runnable {
     }
 
     /**
-     * 断开指定设备的连接
-     * @param deviceId 目标设备ID
+     * Disconnect from target device
+     * @param deviceId
      */
     public static void disconnect(String deviceId) {
         Socket socket = connections.remove(deviceId);

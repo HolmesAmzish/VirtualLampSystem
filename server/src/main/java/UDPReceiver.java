@@ -43,7 +43,7 @@ public class UDPReceiver implements Runnable {
             String[] fields = packetData.split(",");
 
             if (fields.length != 6) {
-                System.out.println("Invalid UDP package: " + packetData);
+                logger.error("Invalid UDP package: " + packetData);
                 return null;
             }
 
@@ -52,17 +52,19 @@ public class UDPReceiver implements Runnable {
             float temperature = Float.parseFloat(fields[2]);
             int humidity = Integer.parseInt(fields[3]);
             int illuminance = Integer.parseInt(fields[4]);
-            String status = fields[5];
+            Boolean status = Boolean.parseBoolean(fields[5]); // Trim the status field to remove extra spaces
 
-            // 将时间字符串转换为 LocalDateTime 对象
+            String statusRecord = status ? "ON" : "OFF";
+
+            // Convert time string to LocalDateTime object
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss");
             LocalDateTime timestamp = LocalDateTime.parse(timestampStr, formatter);
 
-            // 创建并返回 LampStatus 对象
-            return new LampStatus(deviceId, timestamp, temperature, humidity, illuminance, status);
+            return new LampStatus(deviceId, timestamp, temperature, humidity, illuminance, statusRecord);
         } catch (Exception e) {
-            System.out.println("Error while parse UDP package" + e.getMessage());
+            System.out.println("Error while parsing UDP package: " + e.getMessage());
             return null;
         }
     }
+
 }

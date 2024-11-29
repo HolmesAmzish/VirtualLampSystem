@@ -15,7 +15,6 @@ import java.util.concurrent.Executors;
  */
 public class Server {
     private static final int TCP_PORT = 7777;
-    private static final int UDP_PORT = 8888;
 
     private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
@@ -60,13 +59,13 @@ public class Server {
         try {
             switch (cmdParts[0]) {
                 case "help":
-                    System.out.print(String.format("""
+                    System.out.print("""
                             help                    # Show all command
                             switch on/off <device>  # Turn on/off target device
                             history <device>        # Show history of device
                             disconnect <device>     # Disconnect from target device
                             exit                    # Shutdown the server
-                            """));
+                            """);
                     break;
 //                case "status":
 //                    if (cmdParts.length < 2) throw new IllegalArgumentException("");

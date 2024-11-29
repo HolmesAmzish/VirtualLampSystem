@@ -31,6 +31,7 @@ public class TCPClient {
             new Thread(this::listenForCommands).start();
         } catch (IOException e) {
             e.printStackTrace();
+            logger.error("Failed to connect to server");
         }
     }
 
@@ -43,6 +44,7 @@ public class TCPClient {
             logger.info("Server response: " + response);
         } catch (IOException e) {
             e.printStackTrace();
+            logger.error("Error registering device");
         }
     }
 
@@ -51,18 +53,36 @@ public class TCPClient {
         try {
             String command;
             while ((command = in.readLine()) != null) {
+                // Check if socket is closed before continuing
+                if (socket.isClosed()) {
+                    logger.error("Socket is closed. Exiting command listener.");
+                    break;
+                }
+
                 if (command.equalsIgnoreCase("switch on")) {
-                    lampEntity.setStatus("On");
+                    lampEntity.setStatus(true);
                     logger.info("Lamp set to ON.");
+                    logger.info("Lamp status: {}", lampEntity.getStatus());
                 } else if (command.equalsIgnoreCase("switch off")) {
-                    lampEntity.setStatus("Off");
+                    lampEntity.setStatus(false);
                     logger.info("Lamp set to OFF.");
+                    logger.info("Lamp status: {}", lampEntity.getStatus());
                 } else {
-                    System.out.println("Unknown command: " + command);
+                    logger.info("Server message: " + command);
                 }
             }
         } catch (IOException e) {
-            System.out.println("Disconnected from server.");
+            logger.error("IOException occurred while listening for commands: {}", e.getMessage());
+        } finally {
+            try {
+                if (socket != null && !socket.isClosed()) {
+                    socket.close();  // Ensure the socket is closed properly
+                    logger.info("Socket closed.");
+                }
+            } catch (IOException e) {
+                System.exit(1);
+                logger.error("Error closing socket: {}", e.getMessage());
+            }
         }
     }
 }

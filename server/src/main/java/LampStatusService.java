@@ -1,5 +1,7 @@
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -12,6 +14,7 @@ import java.util.List;
 public class LampStatusService {
 
     private final SqlSessionFactory sqlSessionFactory;
+    private final static Logger logger = LoggerFactory.getLogger(LampStatusService.class);
 
     // Constructor
     public LampStatusService(SqlSessionFactory sqlSessionFactory) {
@@ -33,7 +36,7 @@ public class LampStatusService {
             mapper.insertLampStatus(lampStatus);
             session.commit();
         } catch (Exception e) {
-            System.err.println("Failed to insert new record: " + e.getMessage());
+            logger.warn("Failed to insert new record: " + e.getMessage());
         }
     }
 
@@ -47,7 +50,7 @@ public class LampStatusService {
             LampStatusMapper mapper = session.getMapper(LampStatusMapper.class);
             return mapper.getLampStatusHistory(lampId);
         } catch (Exception e) {
-            System.err.println("获取路灯历史状态失败: " + e.getMessage());
+            logger.warn("Failed to query history status: " + e.getMessage());
             return null;
         }
     }

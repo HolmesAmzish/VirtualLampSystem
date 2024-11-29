@@ -18,10 +18,9 @@ public class UDPSender {
     // Send UDP package
     public static void sendData(String serverAddress, LampEntity lampEntity) {
         try (DatagramSocket socket = new DatagramSocket()) {
-            String message = String.format("%s,%s,%.1f,%d,%d,%s",
+            String message = String.format("%s,%s,%.1f,%d,%d,%b",
                     lampEntity.getLampId(),
                     LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss")),
-
                     lampEntity.getTemperature(),
                     lampEntity.getHumidity(),
                     lampEntity.getIlluminance(),

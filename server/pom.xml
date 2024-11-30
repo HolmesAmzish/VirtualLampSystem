@@ -19,14 +19,12 @@
     </properties>
 
     <dependencies>
-        <!-- MyBatis 核心依赖 -->
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
             <version>3.5.9</version>
         </dependency>
 
-        <!-- MySQL JDBC 驱动 -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -34,4 +32,21 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <!-- Use the maven-jar-plugin to package your application -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Main-Class>Server</Main-Class>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -13,7 +13,7 @@
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://iot.arorms.cn:3306/lamp_system"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/lamp_system"/>
                 <property name="username" value="cacc"/>
                 <property name="password" value="20230612"/>
             </dataSource>

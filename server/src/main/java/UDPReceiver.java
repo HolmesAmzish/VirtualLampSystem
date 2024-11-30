@@ -47,13 +47,13 @@ public class UDPReceiver implements Runnable {
                 return null;
             }
 
+            logger.debug(fields.toString());
             String deviceId = fields[0];
             String timestampStr = fields[1];
             float temperature = Float.parseFloat(fields[2]);
             int humidity = Integer.parseInt(fields[3]);
             int illuminance = Integer.parseInt(fields[4]);
-            Boolean status = Boolean.parseBoolean(fields[5]); // Trim the status field to remove extra spaces
-
+            boolean status = Boolean.parseBoolean(fields[5]); // Trim the status field to remove extra spaces
             String statusRecord = status ? "ON" : "OFF";
 
             // Convert time string to LocalDateTime object
